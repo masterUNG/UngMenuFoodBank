@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ungmenufood/models/food_model.dart';
 import 'package:ungmenufood/models/order_sqlite_model.dart';
+import 'package:ungmenufood/page/order.dart';
 import 'package:ungmenufood/utility/my_constant.dart';
 import 'package:ungmenufood/utility/my_style.dart';
 import 'package:ungmenufood/utility/normal_dialog.dart';
@@ -50,6 +51,14 @@ class _MemuFoodState extends State<MemuFood> {
     return Scaffold(
       appBar: AppBar(
         title: Text(category),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              routeToOrder();
+            },
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -191,7 +200,7 @@ class _MemuFoodState extends State<MemuFood> {
     );
   }
 
-  Future<Null> insertOrderToSQLite(FoodModel foodModel, int amount)async {
+  Future<Null> insertOrderToSQLite(FoodModel foodModel, int amount) async {
     int priceInt = int.parse(foodModel.price);
     int sumInt = priceInt * amount;
 
@@ -204,5 +213,23 @@ class _MemuFoodState extends State<MemuFood> {
         sum: sumInt.toString());
 
     SQLiteHelper().insertDataToSQLite(model);
+  }
+
+  Future<Null> routeToOrder() async {
+    try {
+      List<OrderSQLModel> models = List();
+      models = await SQLiteHelper().readDataFromSQLite();
+      print('models.length ==>> ${models.length}');
+
+      if (models.length > 0) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Order(models: models,),
+            ));
+      } else {
+        normalDialog(context, 'Emty Cart');
+      }
+    } catch (e) {}
   }
 }
