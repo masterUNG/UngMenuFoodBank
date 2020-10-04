@@ -21,6 +21,7 @@ class _MemuFoodState extends State<MemuFood> {
   String category, chooseDesk;
   List<String> desks = MyConstant().nameDesks;
   List<FoodModel> foodModels = List();
+  bool statusCart = true;
 
   @override
   void initState() {
@@ -28,6 +29,17 @@ class _MemuFoodState extends State<MemuFood> {
     super.initState();
     category = widget.category;
     readData();
+    readStatusCart();
+  }
+
+  Future<Null> readStatusCart() async {
+    try {
+      List<OrderSQLModel> models = await SQLiteHelper().readDataFromSQLite();
+      if (models.length > 0) {
+        chooseDesk = models[0].desk;
+        statusCart = false;
+      }
+    } catch (e) {}
   }
 
   Future<Null> readData() async {
@@ -62,7 +74,7 @@ class _MemuFoodState extends State<MemuFood> {
       ),
       body: Column(
         children: [
-          buildDropdownButton(),
+          statusCart ? buildDropdownButton() : Text(chooseDesk),
           buildExpanded(),
         ],
       ),
@@ -225,7 +237,9 @@ class _MemuFoodState extends State<MemuFood> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Order(models: models,),
+              builder: (context) => Order(
+                models: models,
+              ),
             ));
       } else {
         normalDialog(context, 'Emty Cart');

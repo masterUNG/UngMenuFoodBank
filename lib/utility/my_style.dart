@@ -15,5 +15,11 @@ class MyStyle {
         fontWeight: FontWeight.w500,
       );
 
+      TextStyle titleStyleH3() => TextStyle(
+        fontSize: 14,
+        color: Colors.purple.shade700,
+        fontWeight: FontWeight.w500,
+      );
+
   MyStyle();
 }

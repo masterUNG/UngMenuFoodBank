@@ -54,4 +54,20 @@ class SQLiteHelper {
     }
     return models;
   }
+
+  Future<Null> deleteSQLitById(int id) async {
+    Database database = await connectedDatabase();
+    try {
+      await database
+          .delete(nameTable, where: '$columnid = $id')
+          .then((value) => print('Detlet id = $id finish'));
+    } catch (e) {}
+  }
+
+  Future<Null> deleateAllData() async {
+    Database database = await connectedDatabase();
+    try {
+      await database.delete(nameTable);
+    } catch (e) {}
+  }
 }
