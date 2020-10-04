@@ -1,4 +1,7 @@
 class MyConstant {
+
+  String domain = 'https://9e21ff401695.ngrok.io';
+
   List<String> categorys = [
     'อาหารจานด่วน',
     'แกง',
@@ -35,7 +38,7 @@ class MyConstant {
     'โต้ะ VIP3'
   ];
 
-  String domain = 'https://d2ce2a378e21.ngrok.io';
+  
 
   MyConstant();
 }

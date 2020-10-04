@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ungmenufood/models/food_model.dart';
+import 'package:ungmenufood/models/order_sqlite_model.dart';
 import 'package:ungmenufood/utility/my_constant.dart';
 import 'package:ungmenufood/utility/my_style.dart';
 import 'package:ungmenufood/utility/normal_dialog.dart';
+import 'package:ungmenufood/utility/sqlite_helper.dart';
 
 class MemuFood extends StatefulWidget {
   final String category;
@@ -157,9 +159,9 @@ class _MemuFoodState extends State<MemuFood> {
                           amount = 1;
                         } else {
                           setState(() {
-                          amount--;
-                          print('amout = $amount');
-                        });
+                            amount--;
+                            print('amout = $amount');
+                          });
                         }
                       },
                     ),
@@ -169,7 +171,10 @@ class _MemuFoodState extends State<MemuFood> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton(
-                      onPressed: null,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        insertOrderToSQLite(foodModel, amount);
+                      },
                       child: Text('OK'),
                     ),
                     TextButton(
@@ -184,5 +189,20 @@ class _MemuFoodState extends State<MemuFood> {
         );
       },
     );
+  }
+
+  Future<Null> insertOrderToSQLite(FoodModel foodModel, int amount)async {
+    int priceInt = int.parse(foodModel.price);
+    int sumInt = priceInt * amount;
+
+    OrderSQLModel model = OrderSQLModel(
+        desk: chooseDesk,
+        idFood: foodModel.id,
+        nameFood: foodModel.nameFood,
+        price: foodModel.price,
+        amount: amount.toString(),
+        sum: sumInt.toString());
+
+    SQLiteHelper().insertDataToSQLite(model);
   }
 }
